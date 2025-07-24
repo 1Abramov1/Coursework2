@@ -1,5 +1,7 @@
-import json, os
+import json
+import os
 from typing import Any, Dict, List, cast
+
 
 class JSONSaver:
     """Класс для сохранения вакансий в JSON и работе с ними."""

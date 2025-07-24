@@ -1,8 +1,11 @@
 from typing import List
+
 from src.vacancy import Vacancy
 
 
-def filter_vacancies(vacancies: List[Vacancy], filter_words: List[str]) -> List[Vacancy]:
+def filter_vacancies(
+    vacancies: List[Vacancy], filter_words: List[str]
+) -> List[Vacancy]:
     """
     Фильтрует вакансии по ключевым словам в названии или описании
 
@@ -20,14 +23,18 @@ def filter_vacancies(vacancies: List[Vacancy], filter_words: List[str]) -> List[
     for vacancy in vacancies:
         # Проверяем каждое ключевое слово
         for word in filter_words:
-            if (word.lower() in vacancy.title.lower() or
-                    word.lower() in vacancy.description.lower()):
+            if (
+                word.lower() in vacancy.title.lower()
+                or word.lower() in vacancy.description.lower()
+            ):
                 filtered.append(vacancy)
                 break
     return filtered
 
 
-def get_vacancies_by_salary(vacancies: List[Vacancy], salary_range: str) -> List[Vacancy]:
+def get_vacancies_by_salary(
+    vacancies: List[Vacancy], salary_range: str
+) -> List[Vacancy]:
     """
     Фильтрует вакансии по диапазону зарплат
 
@@ -42,7 +49,7 @@ def get_vacancies_by_salary(vacancies: List[Vacancy], salary_range: str) -> List
         return vacancies
 
     try:
-        salary_from, salary_to = map(int, salary_range.split('-'))
+        salary_from, salary_to = map(int, salary_range.split("-"))
     except ValueError:
         print("Неверный формат диапазона зарплат. Используйте формат 'min-max'")
         return vacancies
@@ -53,10 +60,13 @@ def get_vacancies_by_salary(vacancies: List[Vacancy], salary_range: str) -> List
             continue
 
         # Для вакансий с указанной зарплатой
-        if vacancy.salary and 'from' in vacancy.salary and 'to' in vacancy.salary:
-            salary_from_vacancy = vacancy.salary['from'] or 0
-            salary_to_vacancy = vacancy.salary['to'] or float('inf')
-            if salary_from <= salary_from_vacancy <= salary_to or salary_from <= salary_to_vacancy <= salary_to:
+        if vacancy.salary and "from" in vacancy.salary and "to" in vacancy.salary:
+            salary_from_vacancy = vacancy.salary["from"] or 0
+            salary_to_vacancy = vacancy.salary["to"] or float("inf")
+            if (
+                salary_from <= salary_from_vacancy <= salary_to
+                or salary_from <= salary_to_vacancy <= salary_to
+            ):
                 filtered.append(vacancy)
 
     return filtered
@@ -72,12 +82,15 @@ def sort_vacancies(vacancies: List[Vacancy]) -> List[Vacancy]:
     Returns:
         Отсортированный список вакансий
     """
-    return sorted(vacancies,
-                  key=lambda x: (
-                      x.salary['from'] if x.salary and 'from' in x.salary and x.salary['from'] is not None
-                      else float('-inf')
-                  ),
-                  reverse=True)
+    return sorted(
+        vacancies,
+        key=lambda x: (
+            x.salary["from"]
+            if x.salary and "from" in x.salary and x.salary["from"] is not None
+            else float("-inf")
+        ),
+        reverse=True,
+    )
 
 
 def get_top_vacancies(vacancies: List[Vacancy], top_n: int) -> List[Vacancy]:

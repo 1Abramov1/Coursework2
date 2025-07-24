@@ -1,16 +1,5 @@
 [
     {
-        "title": "Python-разработчик",
-        "link": "https://hh.ru/vacancy/123038115",
-        "salary": {
-            "from": 130000,
-            "to": null,
-            "currency": "RUR",
-            "gross": false
-        },
-        "description": "Опыт коммерческой разработки на <highlighttext>Python</highlighttext> от 2-3 лет, преимущественно в backend. Понимание <highlighttext>Python</highlighttext> и его современных возможностей (asyncio, type..."
-    },
-    {
         "title": "Backend python developer",
         "link": "https://hh.ru/vacancy/123152544",
         "salary": {
@@ -20,6 +9,17 @@
             "gross": false
         },
         "description": "Требования: Сильные аналитические навыки. Владение стеком <highlighttext>Python</highlighttext> (от 3х лет коммерческой разработки). Умение хорошо работать с данными и с..."
+    },
+    {
+        "title": "Python-разработчик",
+        "link": "https://hh.ru/vacancy/123038115",
+        "salary": {
+            "from": 130000,
+            "to": null,
+            "currency": "RUR",
+            "gross": false
+        },
+        "description": "Опыт коммерческой разработки на <highlighttext>Python</highlighttext> от 2-3 лет, преимущественно в backend. Понимание <highlighttext>Python</highlighttext> и его современных возможностей (asyncio, type..."
     },
     {
         "title": "Бэкенд разработчик Python (Middle)",
@@ -99,25 +99,14 @@
         "description": "Навыки: Обязательные: Понимание client-server взаимодействия, структура HTML/DOM. Опыт анализа сетевого трафика (Charles, Fiddler). Желательные: Опыт с curl_cffi, Playwright..."
     },
     {
-        "title": "Junior Python Backend Developer",
-        "link": "https://hh.ru/vacancy/123116250",
+        "title": "Python Developer / Backend (Junior+/Middle) (разработка Telegram-ботов)",
+        "link": "https://hh.ru/vacancy/122708839",
         "salary": {
-            "from": null,
-            "to": 120000,
+            "from": 90000,
+            "to": 150000,
             "currency": "RUR",
             "gross": false
         },
-        "description": "Уверенное знание <highlighttext>python</highlighttext>. Уверенное знание django и DRF. Опыт работы с git. Опыт работы с PostgreSQL и умение писать SQL..."
-    },
-    {
-        "title": "Junior Python Backend Developer (Разработчик Питон)",
-        "link": "https://hh.ru/vacancy/122437452",
-        "salary": {
-            "from": null,
-            "to": 100000,
-            "currency": "RUR",
-            "gross": false
-        },
-        "description": "Знание <highlighttext>Python</highlighttext> 3.10+ минимум на 5 из 10. Базовые знания Postgres. Опыт работы с Django и/или Fastapi. "
+        "description": "Опыт работы в Backend разработке на <highlighttext>Python</highlighttext> от 2 лет. Стэк: <highlighttext>Python</highlighttext> 3.11+ , Aiogram, SQLAlchemy, FastAPI."
     }
 ]
