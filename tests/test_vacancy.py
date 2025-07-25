@@ -1,11 +1,14 @@
 import unittest
+from typing import Dict, Any
 from src.vacancy import Vacancy
 
 
 class TestVacancy(unittest.TestCase):
-    def setUp(self):
+    """Тесты для класса Vacancy."""
+
+    def setUp(self) -> None:
         """Подготовка тестовых данных."""
-        self.sample_data = {
+        self.sample_data: Dict[str, Any] = {
             "title": "Python Developer",
             "link": "https://example.com/job/1",
             "salary": {
@@ -22,14 +25,14 @@ class TestVacancy(unittest.TestCase):
             description=self.sample_data["description"]
         )
 
-    def test_init(self):
+    def test_init(self) -> None:
         """Тест инициализации вакансии."""
         self.assertEqual(self.vacancy.title, self.sample_data["title"])
         self.assertEqual(self.vacancy.link, self.sample_data["link"])
         self.assertEqual(self.vacancy.salary, self.sample_data["salary"])
         self.assertEqual(self.vacancy.description, self.sample_data["description"])
 
-    def test_str_with_salary(self):
+    def test_str_with_salary(self) -> None:
         """Тест строкового представления вакансии с указанной зарплатой."""
         expected_str = (
             "Python Developer\n"
@@ -39,7 +42,7 @@ class TestVacancy(unittest.TestCase):
         )
         self.assertEqual(str(self.vacancy), expected_str)
 
-    def test_str_without_salary(self):
+    def test_str_without_salary(self) -> None:
         """Тест строкового представления вакансии без зарплаты."""
         vacancy = Vacancy(
             title="Python Developer",
@@ -55,7 +58,7 @@ class TestVacancy(unittest.TestCase):
         )
         self.assertEqual(str(vacancy), expected_str)
 
-    def test_to_dict(self):
+    def test_to_dict(self) -> None:
         """Тест преобразования вакансии в словарь."""
         expected_dict = {
             "title": self.sample_data["title"],
@@ -65,9 +68,9 @@ class TestVacancy(unittest.TestCase):
         }
         self.assertEqual(self.vacancy.to_dict(), expected_dict)
 
-    def test_from_dict(self):
+    def test_from_dict(self) -> None:
         """Тест создания вакансии из словаря."""
-        data = {
+        data: Dict[str, Any] = {
             "name": "Python Developer",
             "alternate_url": "https://example.com/job/1",
             "salary": {
@@ -85,9 +88,9 @@ class TestVacancy(unittest.TestCase):
         self.assertEqual(vacancy.salary, data["salary"])
         self.assertEqual(vacancy.description, data["snippet"]["requirement"])
 
-    def test_from_dict_missing_fields(self):
+    def test_from_dict_missing_fields(self) -> None:
         """Тест создания вакансии из словаря с отсутствующими полями."""
-        data = {}
+        data: Dict[str, Any] = {}
         vacancy = Vacancy.from_dict(data)
         self.assertEqual(vacancy.title, "Без названия")
         self.assertEqual(vacancy.link, "Ссылка не указана")

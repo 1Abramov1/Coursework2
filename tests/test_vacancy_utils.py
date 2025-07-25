@@ -1,15 +1,23 @@
 import pytest
-from typing import List
+from typing import List, Set, Any
 from unittest.mock import Mock
 from src.vacancy import Vacancy
-
 from src.vacancy_utils import filter_vacancies, get_vacancies_by_salary, sort_vacancies, get_top_vacancies, \
     print_vacancies
 
 
 @pytest.fixture
 def sample_vacancies() -> List[Vacancy]:
+    """
+    Фикстура для создания тестовых данных вакансий.
 
+    Returns:
+        List[Vacancy]: Список mock-объектов вакансий с разными характеристиками:
+            - Python Developer (зарплата 100000-150000)
+            - Java Developer (зарплата 120000-180000)
+            - DevOps Engineer (без зарплаты)
+            - Data Scientist (зарплата от 150000)
+    """
     # Вакансия 1
     mock1 = Mock(spec=Vacancy)
     mock1.title = "Python Developer"
@@ -41,56 +49,107 @@ def sample_vacancies() -> List[Vacancy]:
     return [mock1, mock2, mock3, mock4]
 
 
-def test_filter_vacancies_no_filter(sample_vacancies):
+def test_filter_vacancies_no_filter(sample_vacancies: List[Vacancy]) -> None:
+    """
+    Тестирование фильтрации вакансий без указания ключевых слов.
+
+    Args:
+        sample_vacancies: Фикстура с тестовыми вакансиями
+    """
     result = filter_vacancies(sample_vacancies, [])
     assert result == sample_vacancies
 
 
-def test_filter_vacancies_with_filter(sample_vacancies):
+def test_filter_vacancies_with_filter(sample_vacancies: List[Vacancy]) -> None:
+    """
+    Тестирование фильтрации вакансий по одному ключевому слову.
+
+    Args:
+        sample_vacancies: Фикстура с тестовыми вакансиями
+    """
     result = filter_vacancies(sample_vacancies, ["python"])
     assert len(result) == 1
     assert result[0].title == "Python Developer"
 
 
-def test_filter_vacancies_multiple_words(sample_vacancies):
+def test_filter_vacancies_multiple_words(sample_vacancies: List[Vacancy]) -> None:
+    """
+    Тестирование фильтрации вакансий по нескольким ключевым словам.
+
+    Args:
+        sample_vacancies: Фикстура с тестовыми вакансиями
+    """
     result = filter_vacancies(sample_vacancies, ["developer", "engineer"])
     assert len(result) == 3
-    titles = {v.title for v in result}
+    titles: Set[str] = {v.title for v in result}
     assert "Python Developer" in titles
     assert "Java Developer" in titles
     assert "DevOps Engineer" in titles
 
 
-def test_get_vacancies_by_salary_no_range(sample_vacancies):
+def test_get_vacancies_by_salary_no_range(sample_vacancies: List[Vacancy]) -> None:
+    """
+    Тестирование фильтрации вакансий без указания диапазона зарплат.
+
+    Args:
+        sample_vacancies: Фикстура с тестовыми вакансиями
+    """
     result = get_vacancies_by_salary(sample_vacancies, "")
     assert result == sample_vacancies
 
 
-def test_get_vacancies_by_salary_valid_range(sample_vacancies):
+def test_get_vacancies_by_salary_valid_range(sample_vacancies: List[Vacancy]) -> None:
+    """
+    Тестирование фильтрации вакансий по валидному диапазону зарплат.
+
+    Args:
+        sample_vacancies: Фикстура с тестовыми вакансиями
+    """
     result = get_vacancies_by_salary(sample_vacancies, "110000-160000")
     assert len(result) == 3
-    titles = {v.title for v in result}
+    titles: Set[str] = {v.title for v in result}
     assert "Python Developer" in titles
     assert "Java Developer" in titles
     assert "Data Scientist" in titles
 
 
-def test_get_vacancies_by_salary_edge_case(sample_vacancies):
+def test_get_vacancies_by_salary_edge_case(sample_vacancies: List[Vacancy]) -> None:
+    """
+    Тестирование фильтрации вакансий по граничному значению зарплаты.
+
+    Args:
+        sample_vacancies: Фикстура с тестовыми вакансиями
+    """
+
+
     result = get_vacancies_by_salary(sample_vacancies, "150000-150000")
     assert len(result) == 2
-    titles = {v.title for v in result}
+    titles: Set[str] = {v.title for v in result}
     assert "Python Developer" in titles
     assert "Data Scientist" in titles
 
 
-def test_get_vacancies_by_salary_invalid_format(sample_vacancies, capsys):
+def test_get_vacancies_by_salary_invalid_format(sample_vacancies: List[Vacancy], capsys: Any) -> None:
+    """
+    Тестирование обработки невалидного формата диапазона зарплат.
+
+    Args:
+        sample_vacancies: Фикстура с тестовыми вакансиями
+        capsys: Фикстура pytest для перехвата вывода
+    """
     result = get_vacancies_by_salary(sample_vacancies, "100-200-300")
     captured = capsys.readouterr()
     assert "Неверный формат диапазона зарплат" in captured.out
     assert result == sample_vacancies
 
 
-def test_sort_vacancies(sample_vacancies):
+def test_sort_vacancies(sample_vacancies: List[Vacancy]) -> None:
+    """
+    Тестирование сортировки вакансий по зарплате (по убыванию).
+
+    Args:
+        sample_vacancies: Фикстура с тестовыми вакансиями
+    """
     # Добавим вакансию с более высокой зарплатой для проверки сортировки
     mock_high = Mock(spec=Vacancy)
     mock_high.title = "Senior Python Developer"
@@ -107,19 +166,38 @@ def test_sort_vacancies(sample_vacancies):
     assert sorted_vacancies[3].title == "Python Developer"
 
 
-def test_get_top_vacancies(sample_vacancies):
+def test_get_top_vacancies(sample_vacancies: List[Vacancy]) -> None:
+    """
+    Тестирование получения N самых высокооплачиваемых вакансий.
+
+    Args:
+        sample_vacancies: Фикстура с тестовыми вакансиями
+    """
     result = get_top_vacancies(sample_vacancies, 2)
     assert len(result) == 2
     assert result[0].title == "Python Developer"
     assert result[1].title == "Java Developer"
 
 
-def test_get_top_vacancies_more_than_exists(sample_vacancies):
+def test_get_top_vacancies_more_than_exists(sample_vacancies: List[Vacancy]) -> None:
+    """
+    Тестирование случая, когда запрошено больше вакансий, чем есть в списке.
+
+    Args:
+        sample_vacancies: Фикстура с тестовыми вакансиями
+    """
     result = get_top_vacancies(sample_vacancies, 10)
     assert len(result) == 4
 
 
-def test_print_vacancies(sample_vacancies, capsys):
+def test_print_vacancies(sample_vacancies: List[Vacancy], capsys: Any) -> None:
+    """
+    Тестирование вывода информации о вакансиях.
+
+    Args:
+        sample_vacancies: Фикстура с тестовыми вакансиями
+        capsys: Фикстура pytest для перехвата вывода
+    """
     print_vacancies(sample_vacancies[:1])
     captured = capsys.readouterr()
     assert "Python Developer" in captured.out
@@ -128,7 +206,13 @@ def test_print_vacancies(sample_vacancies, capsys):
     assert "Разработчик Python" in captured.out
 
 
-def test_print_vacancies_empty(capsys):
+def test_print_vacancies_empty(capsys: Any) -> None:
+    """
+    Тестирование вывода информации при отсутствии вакансий.
+
+    Args:
+        capsys: Фикстура pytest для перехвата вывода
+    """
     print_vacancies([])
     captured = capsys.readouterr()
     assert "Нет вакансий для отображения" in captured.out
