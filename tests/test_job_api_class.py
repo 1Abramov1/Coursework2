@@ -1,7 +1,10 @@
-import pytest
+from typing import Any, Dict, List, Union
 from unittest.mock import Mock, patch
+
+import pytest
+
 from src.job_api_class import HeadHunterAPI
-from typing import Dict, List, Any, Union
+
 
 class TestHeadHunterAPI:
     """Тесты для класса HeadHunterAPI."""
@@ -9,16 +12,18 @@ class TestHeadHunterAPI:
     def test_init(self) -> None:
         """Тестирование инициализации класса."""
         api: HeadHunterAPI = HeadHunterAPI()
-        assert hasattr(api, 'base_url')
+        assert hasattr(api, "base_url")
         assert api.base_url == "https://api.hh.ru/vacancies"
 
-    @patch('requests.get')
+    @patch("requests.get")
     def test_get_vacancies_success(self, mock_get: Mock) -> None:
         """Тестирование успешного получения вакансий."""
         # Настраиваем mock
         mock_response: Mock = Mock()
         mock_response.status_code = 200
-        mock_response.json.return_value = {"items": [{"id": 1, "name": "Python Developer"}]}
+        mock_response.json.return_value = {
+            "items": [{"id": 1, "name": "Python Developer"}]
+        }
         mock_get.return_value = mock_response
 
         # Вызываем тестируемый метод
@@ -30,7 +35,7 @@ class TestHeadHunterAPI:
         assert vacancies[0]["name"] == "Python Developer"
         mock_get.assert_called_once()
 
-    @patch('requests.get')
+    @patch("requests.get")
     def test_get_vacancies_with_params(self, mock_get: Mock) -> None:
         """Тестирование получения вакансий с дополнительными параметрами."""
         # Настраиваем mock
@@ -48,10 +53,10 @@ class TestHeadHunterAPI:
         args: tuple
         kwargs: Dict[str, Any]
         args, kwargs = mock_get.call_args
-        assert kwargs['params']['salary'] == 100000
-        assert kwargs['params']['experience'] == "between1And3"
+        assert kwargs["params"]["salary"] == 100000
+        assert kwargs["params"]["experience"] == "between1And3"
 
-    @patch('requests.get')
+    @patch("requests.get")
     def test_get_vacancies_failure(self, mock_get: Mock) -> None:
         """Тестирование обработки ошибки запроса."""
         # Настраиваем mock для возврата ошибки
@@ -69,7 +74,7 @@ class TestHeadHunterAPI:
     def test_get_vacancies_default_params(self) -> None:
         """Тестирование параметров по умолчанию."""
         api: HeadHunterAPI = HeadHunterAPI()
-        with patch('requests.get') as mock_get:
+        with patch("requests.get") as mock_get:
             mock_get.return_value.status_code = 200
             mock_get.return_value.json.return_value = {"items": []}
 
@@ -78,9 +83,9 @@ class TestHeadHunterAPI:
             args: tuple
             kwargs: Dict[str, Any]
             args, kwargs = mock_get.call_args
-            params: Dict[str, Union[str, int]] = kwargs['params']
+            params: Dict[str, Union[str, int]] = kwargs["params"]
 
-            assert params['text'] == "Python"
-            assert params['search_field'] == "name"
-            assert params['per_page'] == 100
-            assert params['area'] == 113
+            assert params["text"] == "Python"
+            assert params["search_field"] == "name"
+            assert params["per_page"] == 100
+            assert params["area"] == 113
