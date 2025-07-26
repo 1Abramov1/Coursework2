@@ -1,9 +1,12 @@
-import pytest
-from typing import List, Set, Any
+from typing import Any, List, Set
 from unittest.mock import Mock
+
+import pytest
+
 from src.vacancy import Vacancy
-from src.vacancy_utils import filter_vacancies, get_vacancies_by_salary, sort_vacancies, get_top_vacancies, \
-    print_vacancies
+from src.vacancy_utils import (filter_vacancies, get_top_vacancies,
+                               get_vacancies_by_salary, print_vacancies,
+                               sort_vacancies)
 
 
 @pytest.fixture
@@ -22,14 +25,14 @@ def sample_vacancies() -> List[Vacancy]:
     mock1 = Mock(spec=Vacancy)
     mock1.title = "Python Developer"
     mock1.description = "Разработчик Python с опытом работы от 3 лет"
-    mock1.salary = {'from': 100000, 'to': 150000}
+    mock1.salary = {"from": 100000, "to": 150000}
     mock1.link = "http://example.com/python"
 
     # Вакансия 2
     mock2 = Mock(spec=Vacancy)
     mock2.title = "Java Developer"
     mock2.description = "Требуется Java разработчик"
-    mock2.salary = {'from': 120000, 'to': 180000}
+    mock2.salary = {"from": 120000, "to": 180000}
     mock2.link = "http://example.com/java"
 
     # Вакансия 3 (без зарплаты)
@@ -43,7 +46,7 @@ def sample_vacancies() -> List[Vacancy]:
     mock4 = Mock(spec=Vacancy)
     mock4.title = "Data Scientist"
     mock4.description = "Анализ данных и машинное обучение"
-    mock4.salary = {'from': 150000, 'to': None}
+    mock4.salary = {"from": 150000, "to": None}
     mock4.link = "http://example.com/data"
 
     return [mock1, mock2, mock3, mock4]
@@ -121,7 +124,6 @@ def test_get_vacancies_by_salary_edge_case(sample_vacancies: List[Vacancy]) -> N
         sample_vacancies: Фикстура с тестовыми вакансиями
     """
 
-
     result = get_vacancies_by_salary(sample_vacancies, "150000-150000")
     assert len(result) == 2
     titles: Set[str] = {v.title for v in result}
@@ -129,7 +131,9 @@ def test_get_vacancies_by_salary_edge_case(sample_vacancies: List[Vacancy]) -> N
     assert "Data Scientist" in titles
 
 
-def test_get_vacancies_by_salary_invalid_format(sample_vacancies: List[Vacancy], capsys: Any) -> None:
+def test_get_vacancies_by_salary_invalid_format(
+    sample_vacancies: List[Vacancy], capsys: Any
+) -> None:
     """
     Тестирование обработки невалидного формата диапазона зарплат.
 
@@ -154,7 +158,7 @@ def test_sort_vacancies(sample_vacancies: List[Vacancy]) -> None:
     mock_high = Mock(spec=Vacancy)
     mock_high.title = "Senior Python Developer"
     mock_high.description = "Опыт от 5 лет"
-    mock_high.salary = {'from': 200000, 'to': 250000}
+    mock_high.salary = {"from": 200000, "to": 250000}
     mock_high.link = "http://example.com/senior"
 
     vacancies = sample_vacancies + [mock_high]
@@ -216,4 +220,3 @@ def test_print_vacancies_empty(capsys: Any) -> None:
     print_vacancies([])
     captured = capsys.readouterr()
     assert "Нет вакансий для отображения" in captured.out
-

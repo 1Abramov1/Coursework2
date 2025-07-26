@@ -1,6 +1,6 @@
-import unittest
-import os
 import json
+import os
+import unittest
 
 from src.save_json import JSONSaver
 
@@ -11,8 +11,7 @@ class TestJSONSaver(unittest.TestCase):
     def setUp(self) -> None:
         """Настройка перед каждым тестом."""
         self.filename = "test_vacancies.json"
-        self.saver = JSONSaver()
-        self.saver._JSONSaver__filename = self.filename  # Доступ к приватному полю для тестов
+        self.saver = JSONSaver(self.filename)
         # Очищаем файл перед каждым тестом
         if os.path.exists(self.filename):
             os.remove(self.filename)
@@ -22,18 +21,18 @@ class TestJSONSaver(unittest.TestCase):
         if os.path.exists(self.filename):
             os.remove(self.filename)
 
-    def test_load_vacancy_empty_file(self) -> None:
+    def test_load_vacancies_empty_file(self) -> None:
         """Тест загрузки из пустого/несуществующего файла."""
-        result = self.saver.load_vacancy()
+        result = self.saver.load_vacancies()
         self.assertEqual(result, [])
 
-    def test_load_vacancy_non_empty_file(self) -> None:
+    def test_load_vacancies_non_empty_file(self) -> None:
         """Тест загрузки из файла с данными."""
         test_data = [{"title": "Developer"}, {"title": "Manager"}]
         with open(self.filename, "w", encoding="utf-8") as file:
             json.dump(test_data, file)
 
-        result = self.saver.load_vacancy()
+        result = self.saver.load_vacancies()
         self.assertEqual(result, test_data)
 
     def test_add_vacancy_new(self) -> None:
@@ -73,17 +72,19 @@ class TestJSONSaver(unittest.TestCase):
         vacancy = {"title": "Developer"}
         non_existing_vacancy = {"title": "Manager"}
         self.saver.add_vacancy(vacancy)
-        self.saver.delete_vacancy(non_existing_vacancy)  # Пытаемся удалить несуществующую
+        self.saver.delete_vacancy(
+            non_existing_vacancy
+        )  # Пытаемся удалить несуществующую
 
         with open(self.filename, "r", encoding="utf-8") as file:
             data = json.load(file)
 
         self.assertEqual(data, [vacancy])  # Данные не должны измениться
 
-    def test_save(self) -> None:
+    def test_save_vacancies(self) -> None:
         """Тест сохранения данных в файл."""
         test_data = [{"title": "Developer"}, {"title": "Manager"}]
-        self.saver.save(test_data)
+        self.saver.save_vacancies(test_data)
 
         with open(self.filename, "r", encoding="utf-8") as file:
             data = json.load(file)

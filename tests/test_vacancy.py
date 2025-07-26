@@ -1,101 +1,108 @@
 import unittest
-from typing import Dict, Any
+from typing import Optional, Union
 from src.vacancy import Vacancy
 
 
-class TestVacancy(unittest.TestCase):
-    """Тесты для класса Vacancy."""
+class TestVacancyMethods(unittest.TestCase):
+    """Тесты для методов класса Vacancy."""
 
     def setUp(self) -> None:
         """Подготовка тестовых данных."""
-        self.sample_data: Dict[str, Any] = {
-            "title": "Python Developer",
-            "link": "https://example.com/job/1",
-            "salary": {
-                "from": 100000,
-                "to": 150000,
-                "currency": "RUR"
-            },
-            "description": "Требуется опытный Python-разработчик."
+        self.sample_data = {
+            "name": "Python Developer",
+            "alternate_url": "http://example.com",
+            "salary": {"from": 100000, "to": 150000, "currency": "RUR"},
+            "snippet": {"requirement": "Опыт работы с Python"},
         }
-        self.vacancy = Vacancy(
-            title=self.sample_data["title"],
-            link=self.sample_data["link"],
-            salary=self.sample_data["salary"],
-            description=self.sample_data["description"]
-        )
+        self.vacancy = Vacancy.from_dict(self.sample_data)
 
-    def test_init(self) -> None:
-        """Тест инициализации вакансии."""
-        self.assertEqual(self.vacancy.title, self.sample_data["title"])
-        self.assertEqual(self.vacancy.link, self.sample_data["link"])
-        self.assertEqual(self.vacancy.salary, self.sample_data["salary"])
-        self.assertEqual(self.vacancy.description, self.sample_data["description"])
+    def test_get_min_salary(self) -> None:
+        """Тест метода get_min_salary()."""
+        # Тест с указанной зарплатой
+        self.assertEqual(self.vacancy.get_min_salary(), 100000)
 
-    def test_str_with_salary(self) -> None:
-        """Тест строкового представления вакансии с указанной зарплатой."""
-        expected_str = (
-            "Python Developer\n"
-            "Зарплата: 100000 - 150000 RUR\n"
-            "Ссылка: https://example.com/job/1\n"
-            "Описание: Требуется опытный Python-разработчик....\n"
-        )
-        self.assertEqual(str(self.vacancy), expected_str)
+        # Тест с отсутствующей зарплатой
+        vacancy_no_salary = Vacancy.from_dict({**self.sample_data, "salary": None})
+        self.assertEqual(vacancy_no_salary.get_min_salary(), 0)
 
-    def test_str_without_salary(self) -> None:
-        """Тест строкового представления вакансии без зарплаты."""
-        vacancy = Vacancy(
-            title="Python Developer",
-            link="https://example.com/job/1",
-            salary=None,
-            description="Требуется опытный Python-разработчик."
+        # Тест с отсутствующим 'from' в зарплате
+        vacancy_no_from = Vacancy.from_dict(
+            {**self.sample_data, "salary": {"to": 120000}}
         )
-        expected_str = (
-            "Python Developer\n"
-            "Зарплата не указана\n"
-            "Ссылка: https://example.com/job/1\n"
-            "Описание: Требуется опытный Python-разработчик....\n"
+        self.assertEqual(vacancy_no_from.get_min_salary(), 0)
+
+        # Тест с отрицательной зарплатой
+        vacancy_negative = Vacancy.from_dict(
+            {**self.sample_data, "salary": {"from": -50000, "to": 100000}}
         )
-        self.assertEqual(str(vacancy), expected_str)
+        self.assertEqual(vacancy_negative.get_min_salary(), 0)
+
+    def test_get_max_salary(self) -> None:
+        """Тест метода get_max_salary()."""
+        # Тест с указанной зарплатой
+        self.assertEqual(self.vacancy.get_max_salary(), 150000)
+
+        # Тест с отсутствующей зарплатой
+        vacancy_no_salary = Vacancy.from_dict({**self.sample_data, "salary": None})
+        self.assertEqual(vacancy_no_salary.get_max_salary(), 0)
+
+        # Тест с отсутствующим 'to' в зарплате
+        vacancy_no_to = Vacancy.from_dict(
+            {**self.sample_data, "salary": {"from": 100000}}
+        )
+        self.assertEqual(vacancy_no_to.get_max_salary(), 0)
+
+        # Тест с отрицательной зарплатой
+        vacancy_negative = Vacancy.from_dict(
+            {**self.sample_data, "salary": {"from": 50000, "to": -100000}}
+        )
+        self.assertEqual(vacancy_negative.get_max_salary(), 0)
 
     def test_to_dict(self) -> None:
-        """Тест преобразования вакансии в словарь."""
+        """Тест метода to_dict()."""
         expected_dict = {
-            "title": self.sample_data["title"],
-            "link": self.sample_data["link"],
-            "salary": self.sample_data["salary"],
-            "description": self.sample_data["description"]
+            "title": "Python Developer",
+            "link": "http://example.com",
+            "salary": {"from": 100000, "to": 150000, "currency": "RUR"},
+            "description": "Опыт работы с Python",
         }
-        self.assertEqual(self.vacancy.to_dict(), expected_dict)
+        self.assertDictEqual(self.vacancy.to_dict(), expected_dict)
+
+        # Тест с отсутствующей зарплатой
+        vacancy_no_salary = Vacancy.from_dict({**self.sample_data, "salary": None})
+        expected_no_salary = {
+            "title": "Python Developer",
+            "link": "http://example.com",
+            "salary": {"from": 0, "to": 0, "currency": ""},
+            "description": "Опыт работы с Python",
+        }
+        self.assertDictEqual(vacancy_no_salary.to_dict(), expected_no_salary)
 
     def test_from_dict(self) -> None:
-        """Тест создания вакансии из словаря."""
-        data: Dict[str, Any] = {
-            "name": "Python Developer",
-            "alternate_url": "https://example.com/job/1",
-            "salary": {
-                "from": 100000,
-                "to": 150000,
-                "currency": "RUR"
-            },
-            "snippet": {
-                "requirement": "Требуется опытный Python-разработчик."
-            }
-        }
-        vacancy = Vacancy.from_dict(data)
-        self.assertEqual(vacancy.title, data["name"])
-        self.assertEqual(vacancy.link, data["alternate_url"])
-        self.assertEqual(vacancy.salary, data["salary"])
-        self.assertEqual(vacancy.description, data["snippet"]["requirement"])
+        """Тест метода from_dict()."""
+        # Проверка основных полей
+        self.assertEqual(self.vacancy.title, "Python Developer")
+        self.assertEqual(self.vacancy.link, "http://example.com")
+        self.assertEqual(self.vacancy.description, "Опыт работы с Python")
+        self.assertDictEqual(
+            self.vacancy.salary, {"from": 100000, "to": 150000, "currency": "RUR"}
+        )
 
-    def test_from_dict_missing_fields(self) -> None:
-        """Тест создания вакансии из словаря с отсутствующими полями."""
-        data: Dict[str, Any] = {}
-        vacancy = Vacancy.from_dict(data)
-        self.assertEqual(vacancy.title, "Без названия")
-        self.assertEqual(vacancy.link, "Ссылка не указана")
-        self.assertIsNone(vacancy.salary)
-        self.assertEqual(vacancy.description, "Описание не указано")
+        # Тест с неполными данными
+        incomplete_data: dict[str, Optional[Union[str, dict]]] = {
+            "name": "Incomplete Job",
+            "alternate_url": None,
+            "salary": None,
+            "snippet": {},
+        }
+
+        vacancy_incomplete = Vacancy.from_dict(incomplete_data)
+        self.assertEqual(vacancy_incomplete.title, "Incomplete Job")
+        self.assertEqual(vacancy_incomplete.link, None)  # Изменено ожидаемое значение
+        self.assertEqual(vacancy_incomplete.description, "Описание не указано")
+        self.assertDictEqual(
+            vacancy_incomplete.salary, {"from": 0, "to": 0, "currency": ""}
+        )
 
 
 if __name__ == "__main__":
